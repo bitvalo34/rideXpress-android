@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "22594899158",
+    "project_id": "ridexpress-a2c29",
+    "storage_bucket": "ridexpress-a2c29.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:22594899158:android:35ec8788c4469ae2368d77",
+        "android_client_info": {
+          "package_name": "com.ridexpress.driver_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "22594899158-i34vskirdgs5cn974e8mmspq0brbbuvm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgjA4eoccLbmfPOw3NNten-8ccsrZXnD8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "22594899158-i34vskirdgs5cn974e8mmspq0brbbuvm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
