@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tema base de la app, hereda de Material3 (AppCompat compatible) -->
+    <style name="Theme.RideXpress.DriverApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Personaliza tus colores aquí -->
+        <item name="colorPrimary">@color/driver_orange</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="android:statusBarColor">@color/driver_orange</item>
+        <!-- ...otros atributos de Material3 si los necesitas -->
+    </style>
+</resources>
