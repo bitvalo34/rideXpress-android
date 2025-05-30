@@ -11,6 +11,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.FirebaseAuth
+
 
 sealed class AuthState {
     object Idle : AuthState()
@@ -61,9 +64,23 @@ class LoginViewModel(
             .onFailure { _state.value = AuthState.Error(it.message ?: "Error de envío") }
     }
 
+    fun setError(msg: String) {
+        _state.value = AuthState.Error(msg)
+    }
+
     /* ─────── Google ─────── */
     fun loginGoogle(idToken: String) = runCatchingToState {
-        authService.signInWithGoogle(idToken).getOrThrow()
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+
+        // FirebaseAuth global (no hay “auth” local)
+        val user = FirebaseAuth.getInstance()
+            .signInWithCredential(credential)
+            .await()
+            .user ?: throw Exception("No se pudo obtener el usuario de Google")
+
+        // 🔄 refresca el ID-token para recibir el claim `role=driver`
+        user.getIdToken(true).await()
+        user                               //  ← este “user” lo recibe runCatching…
     }
 
     /* ---------- Teléfono ---------- */

@@ -50,6 +50,10 @@ class RegisterActivity : ComponentActivity() {
         val googleLauncher = registerForActivityResult(
             ActivityResultContracts.StartIntentSenderForResult()
         ) { res ->
+            if (res.resultCode != RESULT_OK) {
+                vm.setError("Operación cancelada")
+                return@registerForActivityResult
+            }
             try {
                 val cred = oneTap.getSignInCredentialFromIntent(res.data)
                 cred.googleIdToken?.let { idToken ->
@@ -59,11 +63,11 @@ class RegisterActivity : ComponentActivity() {
         }
 
         setContent {
-            val vm: RegisterViewModel = viewModel()
+            val viewModel = this@RegisterActivity.vm
             var username by remember { mutableStateOf("") }
             var email    by remember { mutableStateOf("") }
             var pass     by remember { mutableStateOf("") }
-            val state by vm.state.collectAsState()
+            val state     by viewModel.state.collectAsState()
 
             RegisterScreen(
                 username = username,
@@ -92,7 +96,6 @@ class RegisterActivity : ComponentActivity() {
                     }
                 },
                 state = state,
-                onSubmit = { u, e, p -> vm.register(e, p, u) },
                 onBackToLogin = { finish() }
             )
 
@@ -100,8 +103,6 @@ class RegisterActivity : ComponentActivity() {
         }
     }
 
-    private lateinit var vm: RegisterViewModel
-    private var usernameCache = ""
 }
 
 @Composable

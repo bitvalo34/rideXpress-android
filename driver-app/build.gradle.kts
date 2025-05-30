@@ -44,6 +44,9 @@ android {
 dependencies {
 
     implementation(platform(libs.androidx.compose.bom))
+    implementation(platform("com.google.firebase:firebase-bom:33.3.1"))
+    implementation("com.google.firebase:firebase-auth-ktx")      // 24.9.2
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
     implementation("com.google.android.gms:play-services-location:21.2.0")
     implementation("com.google.maps.android:maps-compose:2.11.3")
@@ -77,4 +80,6 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.fragment.ktx)
+    implementation(libs.activity.ktx)
 }

@@ -34,6 +34,7 @@ import com.ridexpress.driver_app.viewmodel.AuthState
 import com.ridexpress.driver_app.viewmodel.LoginViewModel
 import androidx.compose.ui.platform.LocalContext
 import com.ridexpress.driver_app.ui.activity.RegisterActivity
+import com.google.firebase.auth.FirebaseAuth
 
 /* -------------------------  Activity  ------------------------- */
 
@@ -52,6 +53,10 @@ class LoginActivity : ComponentActivity() {
         val googleLauncher = registerForActivityResult(
             ActivityResultContracts.StartIntentSenderForResult()
         ) { result ->
+            if (result.resultCode != RESULT_OK) {
+                vm.setError("Operación cancelada")
+                return@registerForActivityResult
+            }
             try {
                 val cred = oneTapClient.getSignInCredentialFromIntent(result.data)
                 cred.googleIdToken?.let(vm::loginGoogle)
