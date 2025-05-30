@@ -1,7 +1,11 @@
 package com.ridexpress.driver_app.ui.activity
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -30,12 +34,78 @@ import kotlinx.coroutines.launch
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material.icons.filled.*
+import androidx.core.content.ContextCompat
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
+import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
+import com.ridexpress.driver_app.ui.viewmodel.DriverAvailabilityViewModel
+import com.ridexpress.driver_app.ui.fragment.TripRequestDialogFragment
+import kotlinx.coroutines.flow.collectLatest
 
 class MainActivity : AuthenticatedActivity() {
+
+    private val drvVm: DriverAvailabilityViewModel by viewModels()
+
+    private val notifPermLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (!granted) {
+            Snackbar.make(
+                findViewById(android.R.id.content),
+                "Para recibir viajes necesitas activar las notificaciones.",
+                Snackbar.LENGTH_LONG
+            ).show()
+        }
+    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        lifecycleScope.launchWhenStarted {
+            drvVm.availableTrips.collectLatest { trips ->
+                if (trips.isNotEmpty()) {
+                    val first = trips.first()
+                    if (supportFragmentManager.findFragmentByTag("trip_dialog") == null) {
+                        TripRequestDialogFragment
+                            .newInstance(first)
+                            .show(supportFragmentManager, "trip_dialog")
+                    }
+                }
+            }
+        }
+
+        /* ---------- Comprobación de permiso ---------- */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            when {
+                ContextCompat.checkSelfPermission(
+                    this, Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED -> { /* ya concedido */ }
+
+                shouldShowRequestPermissionRationale(
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) -> {
+                    MaterialAlertDialogBuilder(this)
+                        .setTitle("Permiso de notificaciones")
+                        .setMessage(
+                            "RideXpress necesita enviar notificaciones " +
+                                    "para avisarte de viajes cercanos."
+                        )
+                        .setPositiveButton("Permitir") { _, _ ->
+                            notifPermLauncher.launch(
+                                Manifest.permission.POST_NOTIFICATIONS
+                            )
+                        }
+                            .setNegativeButton("Ahora no", null)
+                            .show()
+                }
+
+                else -> notifPermLauncher.launch(
+                    Manifest.permission.POST_NOTIFICATIONS
+                )
+            }
+        }
 
         setContent {
             /* ---------- State ---------- */
@@ -107,9 +177,7 @@ class MainActivity : AuthenticatedActivity() {
                         modifier      = Modifier.padding(innerPadding),
                         homeContent   = {
                             MainScreen(
-                                navController       = navController,
-                                available           = vm.available.collectAsState().value,
-                                onToggleAvailable   = vm::setAvailable
+                                navController       = navController
                             )
                         }
                     )

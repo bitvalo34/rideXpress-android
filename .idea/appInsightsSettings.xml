@@ -9,7 +9,7 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="com.ridexpress.driver_app" />
-                  <option name="mobileSdkAppId" value="1:22594899158:android:35ec8788c4469ae2368d77" />
+                  <option name="mobileSdkAppId" value="1:22594899158:android:7fba8ec6f546ad5c368d77" />
                   <option name="projectId" value="ridexpress-a2c29" />
                   <option name="projectNumber" value="22594899158" />
                 </ConnectionSetting>
